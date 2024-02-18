@@ -55,7 +55,7 @@ public class FiverGameBoardComponent extends JComponent
 	private final static int TEXT_PX_BUFFER = 14;
 	
 	// The offset of the grid within the component
-	private final static int FRAME_BUFFER_PX = 80;
+	private final static int FRAME_BUFFER_PX = 45;
 	
 
 	/* -------------------------------------------------------------------------
