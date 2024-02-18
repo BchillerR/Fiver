@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -136,21 +138,32 @@ public class FiverSideComponent extends JComponent {
 			c.anchor = GridBagConstraints.NORTH;
 			c.weighty = 1.0;
 			
+			// Construct new game button
 			c.gridx = 0;
 			c.gridy = 0;
 			JButton newGameButton = new JButton("New Game");
 			styleButton(newGameButton);
 			add(newGameButton, c);
 			
+			// Construct reveal button
 			c.gridx = 0;
 			c.gridy = 1;	
 			JButton revealButton = new JButton("Reveal");
 			styleButton(revealButton);
 			add(revealButton, c);
 			
+			// Construct shuffle button
 			c.gridx = 0;
 			c.gridy = 2;	
 			JButton shuffleButton = new JButton("Shuffle");
+			shuffleButton.addActionListener(new ActionListener() 
+			{
+				public void actionPerformed(ActionEvent e)
+				{
+					gameView.gameController.shuffleGameboard();
+					gameView.gameBoardGrid.repaint();
+				}
+			});
 			styleButton(shuffleButton);
 			add(shuffleButton, c);
 		}

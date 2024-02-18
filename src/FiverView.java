@@ -44,6 +44,9 @@ public class FiverView extends JFrame {
 	// Component height for the button panel
 	public static final int BUTTON_COMPONENT_SIZE_HGT = 500;
 	
+	// Reference to gameboard grid
+	public FiverGameBoardComponent gameBoardGrid;
+	
 	
 	/* -------------------------------------------------------------------------
 	 * --                            PRIVATE FIELDS                           --
@@ -52,15 +55,6 @@ public class FiverView extends JFrame {
 	
 	// Size of the application's frame (will always be a square)
 	private static final int FRAME_SIZE = 640;
-	
-	// Button for resetting the gameboard
-	private JButton randomizeButton;
-	
-	// Button for starting a new game with different words
-	private JButton nextButton;
-	
-	// Reference to gameboard grid
-	private FiverGameBoardComponent gameBoardGrid;
 	
 	
 	/* -------------------------------------------------------------------------

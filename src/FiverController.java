@@ -20,8 +20,11 @@ public class FiverController {
 	{
 		INITIALIZE,
 		GAME_ACTIVE,
+		GAME_SOLVED,
+		GAME_REVEAL,
 		SET_UP_NEW_GAME		
 	}
+	
 	
 	/* -------------------------------------------------------------------------
 	 * --                            PUBLIC FIELDS                            --
@@ -140,6 +143,7 @@ public class FiverController {
 		
 		switch (currState)
 		{
+			// Initialize the game
 			case INITIALIZE:			
 				// Generate controller
 				FiverController gameController = new FiverController();
@@ -164,12 +168,26 @@ public class FiverController {
 				currState = GameStateMachine.GAME_ACTIVE;
 				
 				break;
-				
+			
+			// Where the application cycles when a game is active
 			case GAME_ACTIVE:
 				
 				
 				break;
+			
+			// Player solved the game
+			case GAME_SOLVED:
 				
+				
+				break;
+			
+			// Player selected reveal
+			case GAME_REVEAL:
+				
+				
+				break;
+			
+			// Set up a new game
 			case SET_UP_NEW_GAME:
 				
 				break;
