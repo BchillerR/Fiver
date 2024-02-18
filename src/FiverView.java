@@ -39,7 +39,7 @@ public class FiverView extends JFrame {
 	public static final int WORD_GRID_COMP_SIZE = 500;
 	
 	// Component width for the button panel
-	public static final int BUTTON_COMPONENT_SIZE_WTH = 140;
+	public static final int SIDE_COMPONENT_SIZE_WTH = 140;
 	
 	// Component height for the button panel
 	public static final int BUTTON_COMPONENT_SIZE_HGT = 500;
@@ -100,9 +100,10 @@ public class FiverView extends JFrame {
 		add(gameBoardGrid, BorderLayout.CENTER);
 		
 		// Next build the side component (houses buttons and timer)
-		FiverSideComponent sideComp = new FiverSideComponent(this);
+		FiverSideComponent sideComp = new FiverSideComponent(this, 
+				SIDE_COMPONENT_SIZE_WTH, BUTTON_COMPONENT_SIZE_HGT, FiverGameBoardComponent.FRAME_BUFFER_PX);
 		sideComp.setFocusable(true);
-		sideComp.setPreferredSize(new Dimension(BUTTON_COMPONENT_SIZE_WTH, BUTTON_COMPONENT_SIZE_HGT));
+		sideComp.setPreferredSize(new Dimension(SIDE_COMPONENT_SIZE_WTH, BUTTON_COMPONENT_SIZE_HGT));
 		add(sideComp, BorderLayout.EAST);
 		
 		// Add the logo

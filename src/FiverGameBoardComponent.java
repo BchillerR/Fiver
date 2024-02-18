@@ -30,7 +30,10 @@ public class FiverGameBoardComponent extends JComponent
 	 * -------------------------------------------------------------------------
 	 */	
 	
+	// The offset of the grid within the component
+	public final static int FRAME_BUFFER_PX = 45;
 
+	
 	/* -------------------------------------------------------------------------
 	 * --                            PRIVATE FIELDS                           --
 	 * -------------------------------------------------------------------------
@@ -53,9 +56,6 @@ public class FiverGameBoardComponent extends JComponent
 	
 	// Padding so text doesn't overwhelm the cells
 	private final static int TEXT_PX_BUFFER = 14;
-	
-	// The offset of the grid within the component
-	private final static int FRAME_BUFFER_PX = 45;
 	
 
 	/* -------------------------------------------------------------------------
