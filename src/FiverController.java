@@ -15,6 +15,13 @@ public class FiverController {
 		DOWN
 	}
 	
+	/* Game state machine */
+	static public enum GameStateMachine
+	{
+		INITIALIZE,
+		GAME_ACTIVE,
+		SET_UP_NEW_GAME		
+	}
 	
 	/* -------------------------------------------------------------------------
 	 * --                            PUBLIC FIELDS                            --
@@ -95,6 +102,26 @@ public class FiverController {
 		}
 	}
 	
+	
+	/**
+	 * Shuffle current gameboard
+	 */
+	public void shuffleGameboard()
+	{
+		// Iterate over every column
+		for (int i = 0; i < BOARD_SIZE; i++)
+		{
+			// Generate a random value to rotate the current column by
+			int rotateAmount = (int)Math.floor(Math.random() * BOARD_SIZE);
+			
+			// Rotate the current column by the randomly generated amount
+			for (int rotateCtr = 0; rotateCtr < rotateAmount; rotateCtr++)
+			{
+				rotateRow(i, RotateDirection.UP);
+			}
+		}
+	}
+	
 
 	/**
 	 * Setter function to give controller a reference to the game's model
@@ -107,21 +134,51 @@ public class FiverController {
 	
 
 	public static void main(String[] args) {
-		/* Generate controller */
-		FiverController gameController = new FiverController();
-
-		/* Generate words for initial round */
-		Words wordMachine = new Words();
-		String[] gameSolution = wordMachine.getUniqueRandWords(gameController.BOARD_SIZE);
-
-		/* Generate model */
-		FiverModel gameModel = new FiverModel(gameSolution);
-
-		/* Give controller reference to model */
-		gameController.setGameModel(gameModel);
-
-		/* Generate view */
-		FiverView gameView = new FiverView(gameController, gameModel.currGameBoard);
+		
+		// Prime the applicatin's top level state machine
+		GameStateMachine currState = GameStateMachine.INITIALIZE;
+		
+		switch (currState)
+		{
+			case INITIALIZE:			
+				// Generate controller
+				FiverController gameController = new FiverController();
+		
+				// Generate words for initial round
+				Words wordMachine = new Words();
+				String[] gameWords = wordMachine.getUniqueRandWords(gameController.BOARD_SIZE);
+		
+				// Generate model
+				FiverModel gameModel = new FiverModel(gameWords);
+		
+				// Give controller reference to model
+				gameController.setGameModel(gameModel);
+				
+				// Scramble board
+				gameController.shuffleGameboard();
+				
+				// Generate view
+				FiverView gameView = new FiverView(gameController, gameModel.currGameBoard);
+				
+				// Initialization complete
+				currState = GameStateMachine.GAME_ACTIVE;
+				
+				break;
+				
+			case GAME_ACTIVE:
+				
+				
+				break;
+				
+			case SET_UP_NEW_GAME:
+				
+				break;
+			
+			default: 
+				// Do nothing
+				
+				break;
+		}
 	}
 	
 	

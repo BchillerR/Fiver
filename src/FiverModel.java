@@ -38,9 +38,30 @@ public class FiverModel {
 	 */
 	public FiverModel(String[] initialGameBoard)
 	{
-		gameBoardSolution = initialGameBoard;
+		// Record the solution
+		recordSolution(initialGameBoard);
+		
+		// Reference to active game board 
 		currGameBoard = initialGameBoard;
-	}	
+	}
+	
+	/**
+	 * Helper function for a creating a deep copy of the solution
+	 * @param initialGameBoard
+	 */
+	public void recordSolution(String[] initialGameBoard)
+	{
+		// Perform a deep copy of the solution by allocating a new
+		// array and copying strings over
+		gameBoardSolution = new String[initialGameBoard.length];
+		
+		for (int i = 0; i < gameBoardSolution.length; i++)
+		{
+			// Strings in Java are immutable, so the below
+			// method of copying is productive
+			gameBoardSolution[i] = gameBoardSolution[i];
+		}
+	}
 	
 	
 	/* -------------------------------------------------------------------------
