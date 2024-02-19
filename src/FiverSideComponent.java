@@ -46,10 +46,6 @@ public class FiverSideComponent extends JComponent {
 	// side component's preferred size
 	private static final double TIMER_COMP_SIZE_PCT = 0.75;
 	
-	// Padding for the buttons to prevent them from being
-	// clumped together
-	private static final double BUTTON_SPACING_PCT = 0.01;
-	
 
 	/* -------------------------------------------------------------------------
 	 * --                            PUBLIC METHODS                           --

@@ -1,3 +1,5 @@
+import java.util.HashSet;
+
 /**
  * Model class
  */
@@ -14,11 +16,11 @@ public class FiverModel {
 	 * -------------------------------------------------------------------------
 	 */	
 	
-	// Stores the current state of the gameboard
-	public String[] currGameBoard;
+	// Stores the current state of the game board
+	public volatile String[] currGameBoard;
 	
 	// Stores the solution to the puzzle
-	public String[] gameBoardSolution;
+	public volatile HashSet<String> gameBoardSolution;
 	
 
 	/* -------------------------------------------------------------------------
@@ -46,20 +48,20 @@ public class FiverModel {
 	}
 	
 	/**
-	 * Helper function for a creating a deep copy of the solution
+	 * Helper function for a creating a record of the solution
 	 * @param initialGameBoard
 	 */
 	public void recordSolution(String[] initialGameBoard)
 	{
 		// Perform a deep copy of the solution by allocating a new
 		// array and copying strings over
-		gameBoardSolution = new String[initialGameBoard.length];
+		gameBoardSolution = new HashSet<>();
 		
-		for (int i = 0; i < gameBoardSolution.length; i++)
+		for (int i = 0; i < initialGameBoard.length; i++)
 		{
 			// Strings in Java are immutable, so the below
 			// method of copying is productive
-			gameBoardSolution[i] = gameBoardSolution[i];
+			gameBoardSolution.add(initialGameBoard[i]);
 		}
 	}
 	

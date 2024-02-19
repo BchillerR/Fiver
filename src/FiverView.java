@@ -2,7 +2,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -88,7 +87,7 @@ public class FiverView extends JFrame {
 		setTitle("Fiver");
 		
 		// Build the word grid component first
-		gameBoardGrid = new FiverGameBoardComponent(gameController.BOARD_SIZE, this);
+		gameBoardGrid = new FiverGameBoardComponent(FiverController.BOARD_SIZE, this);
 		gameBoardGrid.setFocusable(true);
 		gameBoardGrid.setPreferredSize(new Dimension(WORD_GRID_COMP_SIZE, WORD_GRID_COMP_SIZE));
 		add(gameBoardGrid, BorderLayout.CENTER);

@@ -289,7 +289,7 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	private void calcSquareSize()
 	{
-		int overAllGridSize = gameView.WORD_GRID_COMP_SIZE - (2 * FRAME_BUFFER_PX);
+		int overAllGridSize = FiverView.WORD_GRID_COMP_SIZE - (2 * FRAME_BUFFER_PX);
 		squareSizePx = overAllGridSize / gameBoard.length;
 	}
 	
@@ -373,6 +373,9 @@ public class FiverGameBoardComponent extends JComponent
         		
         		break;	        		
         }
+        
+        // Check whether puzzle solved
+        gameView.gameController.checkForSolved();        
 	}
 	
 }
