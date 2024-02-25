@@ -42,6 +42,9 @@ public class FiverController {
 	// Indicates whether current puzzle is solved
 	public volatile boolean is_Solved;
 	
+	// Indicates whether program should start a new game
+	public volatile boolean startNewGame = false;
+	
 
 	/* -------------------------------------------------------------------------
 	 * --                            PRIVATE FIELDS                           --
@@ -205,7 +208,7 @@ public class FiverController {
 		gameController.is_Solved = false;
 		
 		// Generate view
-		FiverView gameView = new FiverView(gameController, gameModel.currGameBoard);
+		FiverView gameView = new FiverView(gameController);
 		
 		// Set entry for state machine
 		GameStateMachine currState = GameStateMachine.GAME_ACTIVE;
@@ -222,6 +225,11 @@ public class FiverController {
 					if (false != gameController.is_Solved)
 					{
 						currState = GameStateMachine.GAME_SOLVED;
+					}
+					// Check if there's a signal to start a new game
+					else if (false != gameController.startNewGame)
+					{
+						currState = GameStateMachine.SET_UP_NEW_GAME;
 					}
 					
 					break;
@@ -240,6 +248,25 @@ public class FiverController {
 				
 				// Set up a new game
 				case SET_UP_NEW_GAME:
+										
+					// Clear state transition signals
+					gameController.startNewGame = false;
+					
+					// Generate new list of words and update model
+					gameWords = wordMachine.getUniqueRandWords(FiverController.BOARD_SIZE);
+					gameModel.newGameModel(gameWords);
+					
+					// Scramble board
+					gameController.shuffleGameboard();
+					
+					// Mark puzzle as not solved
+					gameController.is_Solved = false;
+					
+					// Go back to active state
+					currState = GameStateMachine.GAME_ACTIVE;
+					
+					// Repaint view
+					gameView.repaint();
 					
 					break;
 				

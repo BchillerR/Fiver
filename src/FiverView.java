@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 /**
@@ -24,9 +25,6 @@ public class FiverView extends JFrame {
 	
 	// Reference for the game's controller
 	public FiverController gameController;
-	
-	// Will hold a reference to the current arrangement of words
-	public String[] currWordArrangement;
 	
 	// Logo component's width
 	public static final int LOGO_COMPONENT_SIZE_WTH = 640;
@@ -64,12 +62,10 @@ public class FiverView extends JFrame {
 	/**
 	 * The primary constructor
 	 * @param gameController reference to the game's controller
-	 * @param initWordArrangement initial arrangement of words 
 	 */
-	public FiverView(FiverController gameController, String[] initWordArrangement)
+	public FiverView(FiverController gameController)
 	{
 		this.gameController = gameController;
-		this.currWordArrangement = initWordArrangement;
 		
 		initGameBoard();
 	}	
@@ -80,11 +76,11 @@ public class FiverView extends JFrame {
 	 */
 	public void initGameBoard()
 	{
-		// Overarching layout manager is border layout
+		// Set up frame
 		setLayout(new BorderLayout());
+		getContentPane().setSize(FRAME_SIZE, FRAME_SIZE);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(FRAME_SIZE, FRAME_SIZE);
-		setTitle("Fiver");
+		setTitle("Fiver");		
 		
 		// Build the word grid component first
 		gameBoardGrid = new FiverGameBoardComponent(FiverController.BOARD_SIZE, this);
@@ -105,20 +101,8 @@ public class FiverView extends JFrame {
 		logoComp.setPreferredSize(new Dimension(LOGO_COMPONENT_SIZE_WTH, LOGO_COMPONENT_SIZE_HGT));
 		add(logoComp, BorderLayout.NORTH);
 		
-		
 		pack();
-		setVisible(true);
-	}
-	
-	
-	/**
-	 * Setter function to give the graphical layer an account of
-	 * what the current layout of words is
-	 * @param currWordArrangement the current layout of words
-	 */
-	public void setCurrWordLayout(String[] currWordArrangement)
-	{
-		this.currWordArrangement = currWordArrangement;
+		setVisible(true);		
 	}
 	
 	

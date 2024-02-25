@@ -36,7 +36,7 @@ public class FiverModel {
 	
 	/**
 	 * Constructs a game based on the provided board size
-	 * @param boardSize Size of the game grid
+	 * @param initialGameBoard the strings to use
 	 */
 	public FiverModel(String[] initialGameBoard)
 	{
@@ -46,6 +46,21 @@ public class FiverModel {
 		// Reference to active game board 
 		currGameBoard = initialGameBoard;
 	}
+	
+	
+	/**
+	 * Used to set-up a new game board within a previously constructed model
+	 * @param initialGameBoard the strings to use
+	 */
+	public void newGameModel(String[] initialGameBoard)
+	{
+		// Record the solution
+		recordSolution(initialGameBoard);
+		
+		// Reference to active game board 
+		currGameBoard = initialGameBoard;
+	}
+	
 	
 	/**
 	 * Helper function for a creating a record of the solution

@@ -138,6 +138,14 @@ public class FiverSideComponent extends JComponent {
 			c.gridx = 0;
 			c.gridy = 0;
 			JButton newGameButton = new JButton("New Game");
+			newGameButton.addActionListener(new ActionListener()
+				{
+					// Signal to the back-end to start a new game
+					public void actionPerformed(ActionEvent e)
+					{
+						gameView.gameController.startNewGame = true;
+					}
+				});
 			styleButton(newGameButton);
 			add(newGameButton, c);
 			
@@ -153,13 +161,13 @@ public class FiverSideComponent extends JComponent {
 			c.gridy = 2;	
 			JButton shuffleButton = new JButton("Shuffle");
 			shuffleButton.addActionListener(new ActionListener() 
-			{
-				public void actionPerformed(ActionEvent e)
 				{
-					gameView.gameController.shuffleGameboard();
-					gameView.gameBoardGrid.repaint();
-				}
-			});
+					public void actionPerformed(ActionEvent e)
+					{
+						gameView.gameController.shuffleGameboard();
+						gameView.gameBoardGrid.repaint();
+					}
+				});
 			styleButton(shuffleButton);
 			add(shuffleButton, c);
 		}

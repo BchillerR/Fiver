@@ -57,6 +57,28 @@ public class FiverGameBoardComponent extends JComponent
 	// Padding so text doesn't overwhelm the cells
 	private final static int TEXT_PX_BUFFER = 14;
 	
+	// How much to dim the game board by when playe rsolves the puzzle
+	private final static float WIN_DIM_PERCENTAGE = 1.0f;
+	
+	/* The below tuples are used to store information about the colors
+	 * that will be used to render the board. 
+	 * Index 0: color to use while puzzle is still being solved
+	 * Index 1: color to use when puzzle is solved/revealed
+	 * Index 2: color that will be used to render the board this cycle
+	 */	
+	private final static int PUZZLE_NOT_SOLVED_CLR_IDX = 0;
+	private final static int PUZZLE_SOLVED_CLR_IDX = 1;
+	private final static int CURRENT_COLOR_IDX = 2;
+	
+	// Color to use for the column select-er
+	Color colSelColorTuple[] = {Color.LIGHT_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY};
+	
+	// Color to use for the text
+	Color txtColorTuple[] = {Color.GRAY, Color.GRAY, Color.GRAY};
+	
+	// Color to use for the borders
+	Color borderColorTuple[] = {Color.GRAY, Color.GRAY, Color.GRAY};
+	
 
 	/* -------------------------------------------------------------------------
 	 * --                            PUBLIC METHODS                           --
@@ -73,6 +95,21 @@ public class FiverGameBoardComponent extends JComponent
 		
 		// Store reference to view
 		this.gameView = gameView;
+		
+		// Calculate colors to use when puzzle solved/revealed
+		colSelColorTuple[PUZZLE_SOLVED_CLR_IDX] = 
+				applyDimEffect(colSelColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX], WIN_DIM_PERCENTAGE);
+		txtColorTuple[PUZZLE_SOLVED_CLR_IDX] = 
+				applyDimEffect(txtColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX], WIN_DIM_PERCENTAGE);
+		borderColorTuple[PUZZLE_SOLVED_CLR_IDX] = 
+				applyDimEffect(borderColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX], WIN_DIM_PERCENTAGE);
+		
+		// Use black border and text for active puzzle 
+		txtColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX] = 
+				applyDirBrightness(txtColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX], 0.0f);
+		borderColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX] = 
+				applyDirBrightness(borderColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX], 0.0f);
+
 		
 		// Calculate sizing for grid and letters
 		calcSquareSize();
@@ -93,12 +130,36 @@ public class FiverGameBoardComponent extends JComponent
 	{
 		Graphics2D g2 = (Graphics2D)g;		
 		
-		// Draw gameboard
+		// Determine which color palette to use
+		updColorsToUse();
+		
+		// Draw game board
 		drawGameBoard(g2);
 		
 		// Draw words
 		g2.setFont(boardFont);
 		draw_Words(g2);
+	}
+	
+	
+	/** 
+	 * Helper function that updates the current colors to use to render the game board
+	 */
+	public void updColorsToUse()
+	{
+		// If puzzle solved, use the dimmer color palette
+		if (false != gameView.gameController.is_Solved)
+		{
+			colSelColorTuple[CURRENT_COLOR_IDX] = colSelColorTuple[PUZZLE_SOLVED_CLR_IDX];
+			txtColorTuple[CURRENT_COLOR_IDX] = txtColorTuple[PUZZLE_SOLVED_CLR_IDX];
+			borderColorTuple[CURRENT_COLOR_IDX] = borderColorTuple[PUZZLE_SOLVED_CLR_IDX];
+		}
+		else
+		{
+			colSelColorTuple[CURRENT_COLOR_IDX] = colSelColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX];
+			txtColorTuple[CURRENT_COLOR_IDX] = txtColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX];
+			borderColorTuple[CURRENT_COLOR_IDX] = borderColorTuple[PUZZLE_NOT_SOLVED_CLR_IDX];
+		}
 	}
 	
 	
@@ -212,7 +273,7 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	private void drawGameBoard(Graphics2D g2)
 	{
-		// Draw the gameboard
+		// Draw the game board
 		for(int x = 0; x < gameBoard.length; x++)
 		{
 			for (int y = 0; y < gameBoard.length; y++)
@@ -220,7 +281,7 @@ public class FiverGameBoardComponent extends JComponent
 				// The active column gets filled with a different color
 				if (x == currCol)
 				{
-					g2.setColor(Color.LIGHT_GRAY);
+					g2.setColor(colSelColorTuple[CURRENT_COLOR_IDX]);
 				}
 				else
 				{
@@ -228,7 +289,7 @@ public class FiverGameBoardComponent extends JComponent
 				}
 				
 				g2.fill(gameBoard[x][y]);					
-				g2.setColor(Color.BLACK);
+				g2.setColor(borderColorTuple[CURRENT_COLOR_IDX]);
 				g2.draw(gameBoard[x][y]);
 			}
 		}	
@@ -241,16 +302,18 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	private void draw_Words(Graphics2D g2)
 	{
+		String[] currWordArrangement = gameView.gameController.gameModel.currGameBoard;
+		
 		// Iterate over every char in every string
-		for (int strInd = 0; strInd < gameView.currWordArrangement.length; strInd++)
+		for (int strInd = 0; strInd < currWordArrangement.length; strInd++)
 		{
-			String currStr = gameView.currWordArrangement[strInd];
+			String currStr = currWordArrangement[strInd];
 			
 			for (int charInd = 0; charInd < currStr.length(); charInd++)
 			{
 				// The current character being rendered. Draw method requires a string.
 				String indvChar = Character.toString(currStr.charAt(charInd));
-				g2.setColor(Color.BLACK);
+				g2.setColor(txtColorTuple[CURRENT_COLOR_IDX]);
 				
 				/* Need to calc starting x,y for this char based on the rectangle
 				 * it's going in.
@@ -291,6 +354,54 @@ public class FiverGameBoardComponent extends JComponent
 	{
 		int overAllGridSize = FiverView.WORD_GRID_COMP_SIZE - (2 * FRAME_BUFFER_PX);
 		squareSizePx = overAllGridSize / gameBoard.length;
+	}
+	
+	
+	/**
+	 * Helper function for dimming a color by a specified weight
+	 * @param c the color to dim
+	 * @param perc the percent amount to dim by (e.g. 0.75 means a 25% reduction in brightness)
+	 * @return the result of dimming the color by the specified amount
+	 */
+	private Color applyDimEffect(Color c, float perc)
+	{
+		// Range check; percent needs to be between 0 and 1. If out of range,
+		// then don't modify brightness
+		if (perc > 1.0f || perc < 0.0f)
+		{
+			perc = 1.0f;
+		}
+		
+		// Convert color to hue/saturation/brightness space and then apply percentage to b
+		float hsbVals[] = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+		Color dimColor = Color.getHSBColor( hsbVals[0], hsbVals[1], perc * hsbVals[2]);
+		
+		return dimColor;
+	}
+	
+	
+	/**
+	 * Helper function for modifying a color to use the exact specified brightness
+	 * @param c the color to modify
+	 * @param brightness a brightness value in the range [0,1]
+	 * @return the result of applying the specified brightness to the color
+	 */
+	private Color applyDirBrightness(Color c, float brightness)
+	{
+		// Convert color to hue/saturation/brightness space
+		float hsbVals[] = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+		
+		// Range check; brightness needs to be between 0 and 1. 
+		// If out of range, don't apply a change
+		if (brightness > 1.0f || brightness < 0.0f)
+		{
+			brightness = hsbVals[2];
+		}
+		
+		// Apply brightness along color/saturation
+		Color retColor = Color.getHSBColor( hsbVals[0], hsbVals[1], brightness);
+		
+		return retColor;
 	}
 	
 	
@@ -338,44 +449,57 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	private void myKeyPressed(int key)
 	{
-        switch( key )
-        {
-	        case KeyEvent.VK_UP:
-	        	// Rotate active column down (note: rotation is opposite of the arrow key)
-	        	gameView.gameController.rotateRow(currCol, FiverController.RotateDirection.DOWN);
-	        	repaint();
-	        	
-	        	break;
+		// Was a relevant key pressed?
+		boolean relKeyPressed = false;
+		
+		// Only allowed to play if the puzzle isn't solved
+		if (false == gameView.gameController.is_Solved)
+		{		
+	        switch( key )
+	        {
+		        case KeyEvent.VK_UP:
+		        	// Rotate active column down (note: rotation is opposite of the arrow key)
+		        	gameView.gameController.rotateRow(currCol, FiverController.RotateDirection.DOWN);
+		        	relKeyPressed = true;
+		        	
+		        	break;
+		        
+		        case KeyEvent.VK_DOWN:
+		        	// Rotate active column up (note: rotation is opposite of the arrow key)
+		        	gameView.gameController.rotateRow(currCol, FiverController.RotateDirection.UP);
+		        	relKeyPressed = true;
+		        	
+		        	break;
+		        	
+		        case KeyEvent.VK_LEFT:
+		        	// Move active col left
+		        	moveActiveCol_Left();
+		        	relKeyPressed = true;
+		        	
+		        	break;
+		        	
+		        case KeyEvent.VK_RIGHT:
+		        	// Move active col right
+		        	moveActiveColRight();
+		        	relKeyPressed = true;
+		        	
+		        	break;
+		        	
+	        	default:
+	        		// Do nothing
+	        		
+	        		break;	        		
+	        }
 	        
-	        case KeyEvent.VK_DOWN:
-	        	// Rotate active column up (note: rotation is opposite of the arrow key)
-	        	gameView.gameController.rotateRow(currCol, FiverController.RotateDirection.UP);
+	        // If a relevant key was pressed then perform necessary back-end logic
+	        if (false != relKeyPressed)
+	        {
+	        	// Check whether puzzle solved
+	        	gameView.gameController.checkForSolved();
+	        	
 	        	repaint();
-	        	
-	        	break;
-	        	
-	        case KeyEvent.VK_LEFT:
-	        	// Move active col left
-	        	moveActiveCol_Left();
-	        	repaint();
-	        	
-	        	break;
-	        	
-	        case KeyEvent.VK_RIGHT:
-	        	// Move active col right
-	        	moveActiveColRight();
-	        	repaint();
-	        	
-	        	break;
-	        	
-        	default:
-        		// Do nothing
-        		
-        		break;	        		
-        }
-        
-        // Check whether puzzle solved
-        gameView.gameController.checkForSolved();        
+	        }
+		}
 	}
 	
 }
