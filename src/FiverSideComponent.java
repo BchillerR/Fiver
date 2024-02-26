@@ -86,8 +86,7 @@ public class FiverSideComponent extends JComponent {
 		FiverViewTimerComp timerComp = new FiverViewTimerComp();
 		int timerSize = remHeight - buttonSizeCalc;
 		timerComp.setPreferredSize(new Dimension(prefWidth, timerSize));
-		add(timerComp, BorderLayout.SOUTH);
-		
+		add(timerComp, BorderLayout.SOUTH);		
 	}
 	
 	
@@ -164,8 +163,11 @@ public class FiverSideComponent extends JComponent {
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						gameView.gameController.shuffleGameboard();
-						gameView.gameBoardGrid.repaint();
+						if (false == gameView.gameController.is_Solved)
+						{
+							gameView.gameController.shuffleGameboard();
+							gameView.gameBoardGrid.repaint();
+						}
 					}
 				});
 			styleButton(shuffleButton);

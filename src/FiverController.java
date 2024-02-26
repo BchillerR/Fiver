@@ -237,6 +237,11 @@ public class FiverController {
 				// Player solved the game
 				case GAME_SOLVED:
 					
+					// Wait for player to click start game
+					if (false != gameController.startNewGame)
+					{
+						currState = GameStateMachine.SET_UP_NEW_GAME;
+					}
 					
 					break;
 				

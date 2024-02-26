@@ -51,14 +51,26 @@ public class FiverGameBoardComponent extends JComponent
 	// The height/width of the rectangles that make up the board
 	private int squareSizePx = 0;
 	
-	// Font for illustrating the letters
+	// Font for illustrating the gameboard letters
 	private Font boardFont = new Font("Arial", Font.BOLD, 30);
 	
-	// Padding so text doesn't overwhelm the cells
-	private final static int TEXT_PX_BUFFER = 14;
+	// Font for illustrating dialogue
+	private Font dialogueFont = new Font ("Arial", Font.BOLD, 30);
 	
-	// How much to dim the game board by when playe rsolves the puzzle
+	// Padding so text doesn't overwhelm the grid cells
+	private final static int GRID_TEXT_PX_BUFFER = 14;
+	
+	// Padding so dialogue text has some space around it
+	private final static int DIAL_TEXT_PX_BUFFER = 24;
+	
+	// How much to dim the game board by when player solves the puzzle
 	private final static float WIN_DIM_PERCENTAGE = 1.0f;
+	
+	// Congratulations string (in Watership Down "Flayrah" means delicious food)
+	private final static String CONGRAT_STRING = "Flayrah!";
+	
+	// Revealed string (in Watership Down Pfeffa means cat)
+	private final static String REVEAL_STRING = "Pfeffa";
 	
 	/* The below tuples are used to store information about the colors
 	 * that will be used to render the board. 
@@ -113,7 +125,10 @@ public class FiverGameBoardComponent extends JComponent
 		
 		// Calculate sizing for grid and letters
 		calcSquareSize();
-		calcApprFontSize(squareSizePx - (2 * TEXT_PX_BUFFER));
+		boardFont = calcApprFontSize(squareSizePx - (2 * GRID_TEXT_PX_BUFFER), boardFont);
+		
+		// Calculate sizing for dialogue
+		dialogueFont = calcApprFontSize(FRAME_BUFFER_PX - DIAL_TEXT_PX_BUFFER, dialogueFont);
 		
 		// Generate the game grid based on the calculated dimensions
 		genGameBoardShape();
@@ -137,7 +152,6 @@ public class FiverGameBoardComponent extends JComponent
 		drawGameBoard(g2);
 		
 		// Draw words
-		g2.setFont(boardFont);
 		draw_Words(g2);
 	}
 	
@@ -187,15 +201,18 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	
 	/**
-	 * Calculate the appropriate font size based on the height of the cells
-	 * in the gameboard. Updates internal font object to the calculated height.
-	 * @param desHeight height of the cells in the gameboard
+	 * Helper function for calculating the max font size that fits
+	 * within the specified desired height. Needed because font size
+	 * is expressed as points instead of pixels.
+	 * @param desHeight desired height of the font in pixels
+	 * @param f the font object to apply size to
+	 * @return font object with the desired height
 	 */
-	private void calcApprFontSize(int desHeight)
+	private Font calcApprFontSize(int desHeight, Font f)
 	{
 		// + or - the tolerable range of the calculated font
-		int FONT_SIZE_RANGE = 1;
-		int currHeight = getFontMetrics(boardFont).getAscent();
+		int FONT_SIZE_RANGE = 3;
+		int currHeight = getFontMetrics(f).getAscent();
 	    
 		boolean sizeFound = false;
 		
@@ -221,21 +238,21 @@ public class FiverGameBoardComponent extends JComponent
 	    // Loop until you find an appropriate height
 		while (false == sizeFound) {
 			
-			int currPtSize = boardFont.getSize();
+			int currPtSize = f.getSize();
 			
 			if (false != sizeDir)
 		   	{
 				// Size up
-				boardFont = boardFont.deriveFont((float)(currPtSize + 1));
+				f = f.deriveFont((float)(currPtSize + 1));
 		   	}
 			else
 			{
 				// Size down
-				boardFont = boardFont.deriveFont((float)(currPtSize - 1));
+				f = f.deriveFont((float)(currPtSize - 1));
 			}
 			
 			// Get new height
-			currHeight = getFontMetrics(boardFont).getHeight();
+			currHeight = getFontMetrics(f).getHeight();
 			
 			// Is this the right height?
 			if ((currHeight >= (desHeight - FONT_SIZE_RANGE)) &&
@@ -244,6 +261,8 @@ public class FiverGameBoardComponent extends JComponent
 				sizeFound = true;
 			}			
 	    }
+		
+		return f;
 	}	
 
 	
@@ -268,7 +287,7 @@ public class FiverGameBoardComponent extends JComponent
 	
 	
 	/**
-	 * Helper function for drawing gameboard
+	 * Helper function for drawing game board
 	 * @param g2 graphics object for drawing
 	 */
 	private void drawGameBoard(Graphics2D g2)
@@ -305,6 +324,8 @@ public class FiverGameBoardComponent extends JComponent
 		String[] currWordArrangement = gameView.gameController.gameModel.currGameBoard;
 		
 		// Iterate over every char in every string
+		g2.setFont(boardFont);
+		
 		for (int strInd = 0; strInd < currWordArrangement.length; strInd++)
 		{
 			String currStr = currWordArrangement[strInd];
@@ -342,6 +363,16 @@ public class FiverGameBoardComponent extends JComponent
 				g2.drawString(indvChar, currRectX + currCharDrawX_Offset, currRectY + (squareSizePx - currCharDrawY_Offset));
 			}
 		}
+		
+		// If solved, display congratulatory dialogue
+		g2.setFont(dialogueFont);
+		
+		if (false != gameView.gameController.is_Solved)
+		{
+			g2.setColor(Color.BLACK);			
+			int solvedOffset = (int)Math.ceil((FRAME_BUFFER_PX - DIAL_TEXT_PX_BUFFER)/2.0);			
+			g2.drawString(CONGRAT_STRING, FRAME_BUFFER_PX, FRAME_BUFFER_PX - solvedOffset);
+		}		
 	}
 	
 	
