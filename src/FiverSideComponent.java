@@ -94,6 +94,7 @@ public class FiverSideComponent extends JComponent {
 	 * --                            PRIVATE METHODS                          --
 	 * -------------------------------------------------------------------------
 	 */	
+	
 		
 	
 	/* -------------------------------------------------------------------------
@@ -115,6 +116,18 @@ public class FiverSideComponent extends JComponent {
 		
 		/* -------------------------------------------------------------------------
 		 * --                            PUBLIC FIELDS                            --
+		 * -------------------------------------------------------------------------
+		 */
+		
+		
+		/* -------------------------------------------------------------------------
+		 * --                            PRIVATE FIELDS                           --
+		 * -------------------------------------------------------------------------
+		 */
+		
+		
+		/* -------------------------------------------------------------------------
+		 * --                            PUBLIC METHODS                           --
 		 * -------------------------------------------------------------------------
 		 */
 		
@@ -152,6 +165,14 @@ public class FiverSideComponent extends JComponent {
 			c.gridx = 0;
 			c.gridy = 1;	
 			JButton revealButton = new JButton("Reveal");
+			revealButton.addActionListener(new ActionListener()
+				{
+					// Signal to the back-end to reveal puzzle
+					public void actionPerformed(ActionEvent e)
+					{
+						gameView.gameController.revealGame = true;
+					}
+				});
 			styleButton(revealButton);
 			add(revealButton, c);
 			
@@ -163,7 +184,9 @@ public class FiverSideComponent extends JComponent {
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						if (false == gameView.gameController.is_Solved)
+						// Only perform shuffle if game is still active
+						if ( (false == gameView.gameController.is_Solved) &&
+							 (false == gameView.gameController.revealGame) )
 						{
 							gameView.gameController.shuffleGameboard();
 							gameView.gameBoardGrid.repaint();
@@ -176,9 +199,9 @@ public class FiverSideComponent extends JComponent {
 		
 		
 		/* -------------------------------------------------------------------------
-		 * --                            PRIVATE FIELDS                           --
+		 * --                            PRIVATE METHODS                          --
 		 * -------------------------------------------------------------------------
-		 */
+		 */		
 		
 		/**
 		 * Style buttons to make them fit the aesthetic
@@ -192,22 +215,10 @@ public class FiverSideComponent extends JComponent {
 			
 			// Remove the focus feature to make buttons more minimalistic
 			b.setFocusPainted(false);
-		}
-		
-		
-		/* -------------------------------------------------------------------------
-		 * --                            PUBLIC METHODS                           --
-		 * -------------------------------------------------------------------------
-		 */
-		
-		
-		/* -------------------------------------------------------------------------
-		 * --                            PRIVATE METHODS                          --
-		 * -------------------------------------------------------------------------
-		 */			
+		}	
 		
 	}
-	
+
 	
 	/**
 	 * Inner class for displaying a timer at the bottom of the button panel
@@ -226,14 +237,6 @@ public class FiverSideComponent extends JComponent {
 		 * -------------------------------------------------------------------------
 		 */
 		
-		/**
-		 * Constructs the class
-		 */
-		public FiverViewTimerComp()
-		{
-			
-		}
-		
 		
 		/* -------------------------------------------------------------------------
 		 * --                            PRIVATE FIELDS                           --
@@ -246,6 +249,14 @@ public class FiverSideComponent extends JComponent {
 		 * -------------------------------------------------------------------------
 		 */
 		
+		/**
+		 * Constructs the class
+		 */
+		public FiverViewTimerComp()
+		{
+			
+		}
+		
 		public void paintComponent(Graphics g)
 		{
 			Graphics2D g2 = (Graphics2D)g;
@@ -255,7 +266,8 @@ public class FiverSideComponent extends JComponent {
 		/* -------------------------------------------------------------------------
 		 * --                            PRIVATE METHODS                          --
 		 * -------------------------------------------------------------------------
-		 */			
+		 */	
+		
 		
 	}
 	

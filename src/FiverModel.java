@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Model class
@@ -70,13 +71,31 @@ public class FiverModel {
 	{
 		// Perform a deep copy of the solution by allocating a new
 		// array and copying strings over
-		gameBoardSolution = new HashSet<>();
+		gameBoardSolution = new HashSet<String>();
 		
 		for (int i = 0; i < initialGameBoard.length; i++)
 		{
 			// Strings in Java are immutable, so the below
 			// method of copying is productive
 			gameBoardSolution.add(initialGameBoard[i]);
+		}
+	}
+	
+	
+	/**
+	 * Sets the current gameboard to the solution
+	 */
+	public void setCurrToSolution()
+	{
+		Iterator<String> it = gameBoardSolution.iterator();
+		
+		// Copy elements from hashset to the array that's used
+		// to store what the current state of the board is
+		int i = 0;
+		while (it.hasNext())
+		{
+			currGameBoard[i] = it.next();
+			i++;
 		}
 	}
 	

@@ -45,6 +45,9 @@ public class FiverController {
 	// Indicates whether program should start a new game
 	public volatile boolean startNewGame = false;
 	
+	// Indicates whether user wants to reveal solution
+	public volatile boolean revealGame = false;
+	
 
 	/* -------------------------------------------------------------------------
 	 * --                            PRIVATE FIELDS                           --
@@ -226,11 +229,18 @@ public class FiverController {
 					{
 						currState = GameStateMachine.GAME_SOLVED;
 					}
+					
 					// Check if there's a signal to start a new game
 					else if (false != gameController.startNewGame)
 					{
 						currState = GameStateMachine.SET_UP_NEW_GAME;
 					}
+					
+					// Check if there's a signal to reveal
+					else if (false != gameController.revealGame)
+					{
+						currState = GameStateMachine.GAME_REVEAL;
+					}					
 					
 					break;
 				
@@ -248,6 +258,17 @@ public class FiverController {
 				// Player selected reveal
 				case GAME_REVEAL:
 					
+					// Set gameboard to solution
+					gameModel.setCurrToSolution();
+					
+					// Repaint
+					gameView.repaint();
+					
+					// Wait for player to click start game
+					if (false != gameController.startNewGame)
+					{
+						currState = GameStateMachine.SET_UP_NEW_GAME;
+					}
 					
 					break;
 				
@@ -256,6 +277,7 @@ public class FiverController {
 										
 					// Clear state transition signals
 					gameController.startNewGame = false;
+					gameController.revealGame = false;
 					
 					// Generate new list of words and update model
 					gameWords = wordMachine.getUniqueRandWords(FiverController.BOARD_SIZE);
@@ -281,10 +303,10 @@ public class FiverController {
 					break;
 			}
 			
-			// Pace the main thread
+			// Pace the main thread (20ms intervals)
 			try 
 			{
-				Thread.sleep(10);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

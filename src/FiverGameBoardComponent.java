@@ -83,13 +83,13 @@ public class FiverGameBoardComponent extends JComponent
 	private final static int CURRENT_COLOR_IDX = 2;
 	
 	// Color to use for the column select-er
-	Color colSelColorTuple[] = {Color.LIGHT_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY};
+	private Color colSelColorTuple[] = {Color.LIGHT_GRAY, Color.LIGHT_GRAY, Color.LIGHT_GRAY};
 	
 	// Color to use for the text
-	Color txtColorTuple[] = {Color.GRAY, Color.GRAY, Color.GRAY};
+	private Color txtColorTuple[] = {Color.GRAY, Color.GRAY, Color.GRAY};
 	
 	// Color to use for the borders
-	Color borderColorTuple[] = {Color.GRAY, Color.GRAY, Color.GRAY};
+	private Color borderColorTuple[] = {Color.GRAY, Color.GRAY, Color.GRAY};
 	
 
 	/* -------------------------------------------------------------------------
@@ -98,7 +98,9 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	
 	/**
-	 * Constructs the class
+	 * Constructs the game board
+	 * @param boardSize size of the board in terms of tiles (will always be a square)
+	 * @param gameView reference to the game's overarching view
 	 */
 	public FiverGameBoardComponent(int boardSize, FiverView gameView)
 	{
@@ -161,8 +163,9 @@ public class FiverGameBoardComponent extends JComponent
 	 */
 	public void updColorsToUse()
 	{
-		// If puzzle solved, use the dimmer color palette
-		if (false != gameView.gameController.is_Solved)
+		// If puzzle solved or revealed, use the dimmer color palette
+		if ( (false != gameView.gameController.is_Solved) ||
+			 (false != gameView.gameController.revealGame) )
 		{
 			colSelColorTuple[CURRENT_COLOR_IDX] = colSelColorTuple[PUZZLE_SOLVED_CLR_IDX];
 			txtColorTuple[CURRENT_COLOR_IDX] = txtColorTuple[PUZZLE_SOLVED_CLR_IDX];
@@ -339,7 +342,7 @@ public class FiverGameBoardComponent extends JComponent
 				/* Need to calc starting x,y for this char based on the rectangle
 				 * it's going in.
 				 * 
-				 * The string's position in the solution array represents the 
+				 * The string's position in the current play array represents the 
 				 * row it will be drawn across. The current char's position
 				 * represents the column.
 				 */
@@ -364,15 +367,21 @@ public class FiverGameBoardComponent extends JComponent
 			}
 		}
 		
-		// If solved, display congratulatory dialogue
+		// If solved or revealed, display respective dialogue
 		g2.setFont(dialogueFont);
+		int solvedOffset = (int)Math.ceil((FRAME_BUFFER_PX - DIAL_TEXT_PX_BUFFER)/2.0);	
 		
 		if (false != gameView.gameController.is_Solved)
 		{
-			g2.setColor(Color.BLACK);			
-			int solvedOffset = (int)Math.ceil((FRAME_BUFFER_PX - DIAL_TEXT_PX_BUFFER)/2.0);			
+			g2.setColor(Color.BLACK);					
 			g2.drawString(CONGRAT_STRING, FRAME_BUFFER_PX, FRAME_BUFFER_PX - solvedOffset);
-		}		
+		}
+		
+		if (false != gameView.gameController.revealGame)
+		{
+			g2.setColor(Color.BLACK);
+			g2.drawString(REVEAL_STRING, FRAME_BUFFER_PX, FRAME_BUFFER_PX - solvedOffset);
+		}
 	}
 	
 	
@@ -483,8 +492,9 @@ public class FiverGameBoardComponent extends JComponent
 		// Was a relevant key pressed?
 		boolean relKeyPressed = false;
 		
-		// Only allowed to play if the puzzle isn't solved
-		if (false == gameView.gameController.is_Solved)
+		// Only allowed to play if the puzzle isn't solved or revealed
+		if ( (false == gameView.gameController.is_Solved) &&
+			 (false == gameView.gameController.revealGame) )
 		{		
 	        switch( key )
 	        {
